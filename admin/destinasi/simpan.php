@@ -179,16 +179,14 @@ try {
 
     // =========================================================
     // REDIRECT KE KELOLA DESTINASI
-    // Tambahkan timestamp untuk mencegah cache
+    // Menggunakan PATH ABSOLUT dari root server (localhost)
+    // Pastikan folder project Anda bernama "BPW" (huruf besar)
     // =========================================================
 
     header(
-        "Location: ../destinasi.php?status=success&refresh="
-        . time()
+        "Location: /BPW/admin/destinasi.php?status=success&refresh=" . time()
     );
-
     exit;
-
 
 } catch (PDOException $e) {
 

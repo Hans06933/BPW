@@ -92,19 +92,19 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
                 <!-- Contact Button - Responsive -->
                 <div class="hidden md:block">
-                    <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold py-2 md:py-2.5 px-3 md:px-5 rounded-full transition duration-300 shadow-lg">
+                    <a href="https://wa.me/6285281441565?text=Halo%20Admin,%20saya%20ingin%20memulai%20percakapan%20dengan%20chatbot." target="_blank" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm font-semibold py-2 md:py-2.5 px-3 md:px-5 rounded-full transition duration-300 shadow-lg">
                         <svg class="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 00-1.02.24l-2.2 2.2a15.04 15.04 0 01-6.59-6.59l2.2-2.21a1 1 0 00.25-1A11.36 11.36 0 018.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/>
                         </svg>
-                        <span class="hidden sm:inline">Hubungi Kami</span>
-                        <span class="sm:hidden">Hubungi</span>
+                        <span class="hidden sm:inline">Tanya Chatbot Kami</span>
+                        <span class="sm:hidden">Chatbot</span>
                     </a>
                 </div>
 
                 <!-- Mobile Menu Button - Visible on tablet and mobile -->
                 <div class="lg:hidden flex items-center space-x-3">
                     <!-- Mobile Contact Button -->
-                    <a href="https://wa.me/6281234567890" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition shadow-lg">
+                    <a href="https://wa.me/6285281441565" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition shadow-lg">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 00-1.02.24l-2.2 2.2a15.04 15.04 0 01-6.59-6.59l2.2-2.21a1 1 0 00.25-1A11.36 11.36 0 018.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/>
                         </svg>

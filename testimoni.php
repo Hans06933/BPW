@@ -152,6 +152,13 @@
         .swiper-container::-webkit-scrollbar {
             display: none;
         }
+
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 <?php include "layout/header.php"; ?>
@@ -319,7 +326,9 @@
         </div>
     </section>
 
-    <!-- FORM UPLOAD TESTIMONI -->
+    <!-- ============================================================ -->
+    <!-- SECTION CTA TESTIMONI (DARI FILE KEDUA) -->
+    <!-- ============================================================ -->
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4 md:px-6 max-w-4xl">
             <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6 md:p-8 text-center">
@@ -335,63 +344,96 @@
         </div>
     </section>
 
-    <!-- MODAL DETAIL TESTIMONI -->
-    <div id="testimoniModal" class="modal">
-        <div class="modal-content">
-            <div class="relative p-6">
-                <button class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200 transition" id="closeModal">
-                    <i class="fa-solid fa-xmark text-gray-600"></i>
-                </button>
-                <div id="modalBody"></div>
-            </div>
+    <!-- ============================================================ -->
+    <!-- MODAL FORM INPUT TESTIMONI (DARI FILE KEDUA) -->
+    <!-- ============================================================ -->
+    <div id="testimoniModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 hidden px-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 md:p-8 relative shadow-xl max-h-[90vh] overflow-y-auto">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <h3 class="text-xl font-bold text-slate-800 mb-1">Kirim Testimoni Anda</h3>
+            <p class="text-xs text-slate-500 mb-6">Ceritakan pengalaman perjalanan Anda bersama BPW.</p>
+            
+            <form action="proses-tambah-testimoni.php" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <!-- Nama & Email -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap</label>
+                        <input type="text" name="nama" required class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600" placeholder="Cth: Budi Santoso">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Email</label>
+                        <input type="email" name="email" required class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600" placeholder="Cth: budi@email.com">
+                    </div>
+                </div>
+
+                <!-- Kota Asal & Destinasi -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Kota Asal</label>
+                        <input type="text" name="kota_asal" class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600" placeholder="Cth: Jakarta">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Destinasi yang Dikunjungi</label>
+                        <input type="text" name="destinasi" required class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600" placeholder="Cth: Bali / Raja Ampat">
+                    </div>
+                </div>
+
+                <!-- Tipe Perjalanan & Rating -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tipe Perjalanan</label>
+                        <select name="tipe_perjalanan" class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600">
+                            <option value="Keluarga">Keluarga</option>
+                            <option value="Couple">Couple</option>
+                            <option value="Solo">Solo</option>
+                            <option value="Teman">Teman</option>
+                            <option value="Bisnis">Bisnis</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Rating</label>
+                        <select name="rating" class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600">
+                            <option value="5">⭐⭐⭐⭐⭐ (5 - Luar Biasa)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 - Sangat Bagus)</option>
+                            <option value="3">⭐⭐⭐ (3 - Cukup)</option>
+                            <option value="2">⭐⭐ (2 - Kurang)</option>
+                            <option value="1">⭐ (1 - Buruk)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Pesan Testimoni -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pesan / Ulasan Testimoni</label>
+                    <textarea name="testimoni" rows="4" required class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-blue-600" placeholder="Tuliskan pengalaman seru Anda..."></textarea>
+                </div>
+
+                <!-- Upload Foto -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Foto Profil / Dokumentasi (Opsional)</label>
+                    <input type="file" name="foto" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition text-sm">
+                        Kirim Testimoni
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- MODAL TULIS TESTIMONI -->
-    <div id="writeModal" class="modal">
-        <div class="modal-content max-w-md">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-lg text-gray-800">Tulis Testimoni</h3>
-                    <button id="closeWriteModal" class="w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200 transition">
-                        <i class="fa-solid fa-xmark text-gray-600"></i>
-                    </button>
-                </div>
-                <form id="testimoniForm">
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-400" placeholder="Contoh: John Doe" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Destinasi</label>
-                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-400">
-                            <option>Bali</option>
-                            <option>Yogyakarta</option>
-                            <option>Labuan Bajo</option>
-                            <option>Bromo</option>
-                            <option>Raja Ampat</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
-                        <div class="flex gap-1 text-2xl" id="ratingStars">
-                            <i class="fa-regular fa-star cursor-pointer hover:text-yellow-400 transition" data-rating="1"></i>
-                            <i class="fa-regular fa-star cursor-pointer hover:text-yellow-400 transition" data-rating="2"></i>
-                            <i class="fa-regular fa-star cursor-pointer hover:text-yellow-400 transition" data-rating="3"></i>
-                            <i class="fa-regular fa-star cursor-pointer hover:text-yellow-400 transition" data-rating="4"></i>
-                            <i class="fa-regular fa-star cursor-pointer hover:text-yellow-400 transition" data-rating="5"></i>
-                        </div>
-                        <input type="hidden" id="selectedRating" value="0">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Testimoni</label>
-                        <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-400" placeholder="Ceritakan pengalaman Anda bersama BPW..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
-                        Kirim Testimoni
-                    </button>
-                    <p class="text-center text-xs text-gray-400 mt-3">*Testimoni akan ditampilkan setelah diverifikasi</p>
-                </form>
+    <!-- MODAL DETAIL TESTIMONI (LAMA) -->
+    <div id="detailTestimoniModal" class="modal">
+        <div class="modal-content">
+            <div class="relative p-6">
+                <button class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-full hover:bg-gray-200 transition" id="closeDetailModal">
+                    <i class="fa-solid fa-xmark text-gray-600"></i>
+                </button>
+                <div id="modalBody"></div>
             </div>
         </div>
     </div>
@@ -551,7 +593,7 @@
             if (!t) return;
             
             const modalBody = document.getElementById("modalBody");
-            const modal = document.getElementById("testimoniModal");
+            const modal = document.getElementById("detailTestimoniModal");
             
             modalBody.innerHTML = `
                 <div class="text-center">
@@ -566,125 +608,81 @@
                         <p class="text-xs text-gray-500"><i class="fa-solid fa-location-dot text-blue-500"></i> Destinasi: ${t.destinationName}</p>
                         <p class="text-xs text-gray-500 mt-1"><i class="fa-regular fa-calendar"></i> Tanggal: ${formatDate(t.date)}</p>
                     </div>
-                    <button onclick="closeModal()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition">
-                                        Tutup
-                                    </button>
-                                </div>
-                            `;
-                            modal.classList.add("active");
-                            document.body.style.overflow = "hidden";
-                        };
-                        
-                        function closeModal() {
-                            const modal = document.getElementById("testimoniModal");
-                            modal.classList.remove("active");
-                            document.body.style.overflow = "";
-                        }
-                        
-                        document.getElementById("closeModal")?.addEventListener("click", closeModal);
-                        document.getElementById("testimoniModal")?.addEventListener("click", (e) => {
-                            if (e.target === document.getElementById("testimoniModal")) closeModal();
-                        });
-                        
-                        // Load More
-                        document.getElementById("loadMoreBtn")?.addEventListener("click", () => {
-                            visibleCount += 4;
-                            renderTestimonials();
-                        });
-                        
-                        // Category Filter
-                        document.querySelectorAll(".filter-btn").forEach(btn => {
-                            btn.addEventListener("click", function() {
-                                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-                                this.classList.add("active");
-                                currentFilter = this.getAttribute("data-filter");
-                                visibleCount = 6;
-                                renderTestimonials();
-                                window.scrollTo({ top: 450, behavior: "smooth" });
-                            });
-                        });
-                        
-                        // Write Testimoni Modal
-                        const writeModal = document.getElementById("writeModal");
-                        const writeBtn = document.getElementById("writeTestimoniBtn");
-                        const closeWriteModal = document.getElementById("closeWriteModal");
-                        
-                        writeBtn?.addEventListener("click", () => {
-                            writeModal.classList.add("active");
-                            document.body.style.overflow = "hidden";
-                        });
-                        
-                        closeWriteModal?.addEventListener("click", () => {
-                            writeModal.classList.remove("active");
-                            document.body.style.overflow = "";
-                        });
-                        
-                        writeModal?.addEventListener("click", (e) => {
-                            if (e.target === writeModal) {
-                                writeModal.classList.remove("active");
-                                document.body.style.overflow = "";
-                            }
-                        });
-                        
-                        // Rating Stars
-                        const ratingStars = document.querySelectorAll("#ratingStars i");
-                        const selectedRating = document.getElementById("selectedRating");
-                        
-                        ratingStars.forEach(star => {
-                            star.addEventListener("click", function() {
-                                const rating = parseInt(this.getAttribute("data-rating"));
-                                selectedRating.value = rating;
-                                ratingStars.forEach((s, i) => {
-                                    if (i < rating) {
-                                        s.className = "fa-solid fa-star text-yellow-400 text-xl cursor-pointer";
-                                    } else {
-                                        s.className = "fa-regular fa-star text-gray-300 text-xl cursor-pointer";
-                                    }
-                                });
-                            });
-                        });
-                        
-                        // Submit Testimoni Form
-                        document.getElementById("testimoniForm")?.addEventListener("submit", (e) => {
-                            e.preventDefault();
-                            alert("Terima kasih! Testimoni Anda akan kami proses dan tampilkan setelah diverifikasi.");
-                            writeModal.classList.remove("active");
-                            document.body.style.overflow = "";
-                        });
-                        
-                        // Scroll to top
-                        const scrollBtn = document.getElementById("scrollTopBtn");
-                        window.addEventListener("scroll", () => {
-                            if (window.scrollY > 400) {
-                                scrollBtn.style.display = "flex";
-                            } else {
-                                scrollBtn.style.display = "none";
-                            }
-                        });
-                        scrollBtn?.addEventListener("click", () => {
-                            window.scrollTo({ top: 0, behavior: "smooth" });
-                        });
-                        
-                        // Handle window resize
-                        let resizeTimeout;
-                        window.addEventListener("resize", () => {
-                            clearTimeout(resizeTimeout);
-                            resizeTimeout = setTimeout(() => renderTestimonials(), 200);
-                        });
-                        
-                        // Initial render
-                        renderTestimonials();
-                    </script>
-                    
-                    <style>
-                        .line-clamp-3 {
-                            display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                        }
-                    </style>
-                    
-                    <?php include "layout/footer.php"; ?>
-                    </body>
-                    </html>
+                    <button onclick="closeDetailModal()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full text-sm font-semibold transition">
+                        Tutup
+                    </button>
+                </div>
+            `;
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+        };
+        
+        function closeDetailModal() {
+            const modal = document.getElementById("detailTestimoniModal");
+            modal.classList.remove("active");
+            document.body.style.overflow = "";
+        }
+        
+        document.getElementById("closeDetailModal")?.addEventListener("click", closeDetailModal);
+        document.getElementById("detailTestimoniModal")?.addEventListener("click", (e) => {
+            if (e.target === document.getElementById("detailTestimoniModal")) closeDetailModal();
+        });
+        
+        // Load More
+        document.getElementById("loadMoreBtn")?.addEventListener("click", () => {
+            visibleCount += 4;
+            renderTestimonials();
+        });
+        
+        // Category Filter
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+                currentFilter = this.getAttribute("data-filter");
+                visibleCount = 6;
+                renderTestimonials();
+                window.scrollTo({ top: 450, behavior: "smooth" });
+            });
+        });
+        
+        // ============================================================
+        // MODAL TULIS TESTIMONI (DARI FILE KEDUA)
+        // ============================================================
+        const writeBtn = document.getElementById('writeTestimoniBtn');
+        const writeModal = document.getElementById('testimoniModal');
+        const closeWriteModalBtn = document.getElementById('closeModalBtn');
+
+        writeBtn.addEventListener('click', () => writeModal.classList.remove('hidden'));
+        closeWriteModalBtn.addEventListener('click', () => writeModal.classList.add('hidden'));
+        window.addEventListener('click', (e) => {
+            if (e.target === writeModal) writeModal.classList.add('hidden');
+        });
+        
+        // Scroll to top
+        const scrollBtn = document.getElementById("scrollTopBtn");
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 400) {
+                scrollBtn.style.display = "flex";
+            } else {
+                scrollBtn.style.display = "none";
+            }
+        });
+        scrollBtn?.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+        
+        // Handle window resize
+        let resizeTimeout;
+        window.addEventListener("resize", () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => renderTestimonials(), 200);
+        });
+        
+        // Initial render
+        renderTestimonials();
+    </script>
+    
+    <?php include "layout/footer.php"; ?>
+</body>
+</html>
