@@ -505,49 +505,133 @@ include "layout/header.php";
     </section>
 
     <!-- TESTIMONI SECTION -->
-    <section class="py-12 md:py-16 bg-slate-50 border-t">
-        <div class="container mx-auto px-4 md:px-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-10 gap-3">
-                <div>
-                    <span class="text-blue-600 font-bold text-xs uppercase tracking-widest block mb-1">Testimoni Pelanggan</span>
-                    <h2 class="text-2xl md:text-3xl font-bold text-custom-blue">Apa Kata Mereka?</h2>
-                </div>
-                <button onclick="window.location.href='testimoni.php'" class="text-blue-600 hover:text-blue-700 font-bold text-xs flex items-center space-x-1 border border-blue-200 px-3 md:px-4 py-1.5 md:py-2 rounded-md hover:bg-blue-50 transition">
-                    <span>Lihat Semua Testimoni</span>
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
+    <!-- ============================================================
+     TESTIMONI PELANGGAN (DINAMIS DARI DATABASE)
+============================================================ -->
+<section class="py-12 md:py-16 bg-slate-50 border-t">
+    <div class="container mx-auto px-4 md:px-6">
+
+        <?php
+        // ============================================================
+        // AMBIL TESTIMONI DARI DATABASE
+        // ============================================================
+        $testimonials = [];
+
+        try {
+            $testimonials = db_get_all("
+                SELECT
+                    nama,
+                    kota_asal,
+                    destinasi,
+                    testimoni,
+                    rating,
+                    foto
+                FROM testimoni
+                WHERE status = 'approved'
+                ORDER BY is_featured DESC, created_at DESC
+                LIMIT 3
+            ");
+        } catch (PDOException $e) {
+            $testimonials = [];
+        }
+        ?>
+
+        <!-- HEADER -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-10 gap-3">
+            <div>
+                <span class="text-blue-600 font-bold text-xs uppercase tracking-widest block mb-1">
+                    Testimoni Pelanggan
+                </span>
+                <h2 class="text-2xl md:text-3xl font-bold text-custom-blue">
+                    Apa Kata Mereka?
+                </h2>
             </div>
+            <a href="testimoni.php"
+               class="text-blue-600 hover:text-blue-700 font-bold text-xs flex items-center space-x-1 border border-blue-200 px-3 md:px-4 py-1.5 md:py-2 rounded-md hover:bg-blue-50 transition">
+                <span>Lihat Semua Testimoni</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+
+        <!-- GRID TESTIMONI -->
+        <?php if (!empty($testimonials)): ?>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-                <?php
-                $testimonials = [
-                    ['name' => 'Siti Rahmawati', 'city' => 'Jakarta', 'text' => 'Pelayanan sangat memuaskan! Itinerary terencana dengan baik dan tour guide sangat ramah serta berpengalaman. Pasti akan travel lagi dengan BPW!'],
-                    ['name' => 'Andi Pratama', 'city' => 'Bandung', 'text' => 'Paket wisata lengkap, harga terjangkau, fasilitas memuaskan. Liburan ke Labuan Bajo bersama BPW sangat berkesan!'],
-                    ['name' => 'Dewi Lestari', 'city' => 'Surabaya', 'text' => 'Proses pemesanan mudah, admin responsif, dan perjalanan berjalan lancar. Recommended banget untuk liburan keluarga!']
-                ];
+                <?php foreach ($testimonials as $tst): ?>
+                    <?php
+                    $nama    = $tst['nama'] ?? 'Anonim';
+                    $kota    = $tst['kota_asal'] ?: 'Indonesia';
+                    $pesan   = $tst['testimoni'] ?? '';
+                    $rating  = max(0, min(5, (int) ($tst['rating'] ?? 5)));
+                    $foto    = $tst['foto'] ?? '';
 
-                foreach ($testimonials as $tst) {
-                    echo "
-                    <div class='bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between'>
-                        <p class='text-gray-600 text-xs italic leading-relaxed mb-4 md:mb-6'>\"{$tst['text']}\"</p>
-                        <div class='flex items-center space-x-3 border-t pt-4'>
-                            <div class='w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs md:text-sm'>
-                                " . substr($tst['name'], 0, 1) . "
-                            </div>
-                            <div>
-                                <h4 class='font-bold text-xs md:text-sm text-slate-800'>{$tst['name']}</h4>
-                                <span class='text-[9px] md:text-[10px] text-gray-400 block'>{$tst['city']}</span>
-                                <div class='text-amber-400 text-[9px] md:text-[10px] mt-1'>
-                                    <i class='fa-solid fa-star'></i><i class='fa-solid fa-star'></i><i class='fa-solid fa-star'></i><i class='fa-solid fa-star'></i><i class='fa-solid fa-star'></i>
+                    // Path foto (kalau ada)
+                    $fotoPath = null;
+                    if (!empty($foto) && file_exists(__DIR__ . '/' . $foto)) {
+                        $fotoPath = $foto;
+                    }
+                    ?>
+
+                    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+
+                        <!-- Rating -->
+                        <div class="text-amber-400 text-[10px] md:text-xs mb-3">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <i class="fa-<?= $i <= $rating ? 'solid' : 'regular' ?> fa-star"></i>
+                            <?php endfor; ?>
+                        </div>
+
+                        <!-- Isi Testimoni -->
+                        <p class="text-gray-600 text-xs italic leading-relaxed mb-4 md:mb-6 flex-1">
+                            "<?= htmlspecialchars($pesan) ?>"
+                        </p>
+
+                        <!-- Info Pengirim -->
+                        <div class="flex items-center space-x-3 border-t pt-4">
+                            <?php if ($fotoPath): ?>
+                                <img src="<?= htmlspecialchars($fotoPath) ?>"
+                                     alt="<?= htmlspecialchars($nama) ?>"
+                                     class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover">
+                            <?php else: ?>
+                                <div class="w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs md:text-sm">
+                                    <?= htmlspecialchars(strtoupper(substr($nama, 0, 1))) ?>
                                 </div>
+                            <?php endif; ?>
+
+                            <div>
+                                <h4 class="font-bold text-xs md:text-sm text-slate-800">
+                                    <?= htmlspecialchars($nama) ?>
+                                </h4>
+                                <span class="text-[9px] md:text-[10px] text-gray-400 block">
+                                    <?= htmlspecialchars($kota) ?>
+                                </span>
                             </div>
                         </div>
-                    </div>";
-                }
-                ?>
+                    </div>
+                <?php endforeach; ?>
             </div>
-        </div>
-    </section>
+
+        <?php else: ?>
+
+            <!-- Empty State -->
+            <div class="bg-white rounded-xl border border-gray-100 p-10 text-center">
+                <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-comment-dots text-blue-500 text-xl"></i>
+                </div>
+                <h3 class="font-bold text-gray-700 mb-1">Belum Ada Testimoni</h3>
+                <p class="text-xs text-gray-400">
+                    Jadilah yang pertama membagikan pengalaman Anda!
+                </p>
+                <a href="testimoni.php#tulis"
+                   class="inline-flex items-center gap-2 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-semibold transition">
+                    <i class="fa-solid fa-pen"></i> Tulis Testimoni
+                </a>
+            </div>
+
+        <?php endif; ?>
+
+    </div>
+</section>
 
 <?php
 include "layout/footer.php";

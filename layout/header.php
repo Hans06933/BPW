@@ -45,10 +45,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <div class="flex items-center justify-between h-16 md:h-20">
                 
                 <div class="flex items-center flex-shrink-0">
-                    <div class="text-sky-400 font-bold flex items-center pr-3 md:pr-4">
-                        <svg class="w-8 h-8 md:w-10 md:h-10" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2c-4.42 0-8 3.58-8 8v8c0 1.1.9 2 2 2h1v4c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-4h4v4c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-4h1c1.1 0 2-.9 2-2v-8c0-4.42-3.58-8-8-8zm-5 16c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm10 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm1-5H6V7h12v6z"/>
-                        </svg>
+                    <div class="flex items-center flex-shrink-0">
+                        <a href="index.php" class="flex items-center">
+                            <img 
+                                src="images/logo.jpg"
+                                alt="Bayu Prima Wisata"
+                                class="h-10 md:h-12 w-auto object-contain"
+                            >
+                        </a>
                     </div>
                     
                     <div class="h-8 md:h-10 w-[1px] bg-white/40"></div>
@@ -96,7 +100,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <svg class="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20 15.5c-1.25 0-2.45-.2-3.57-.57a1.02 1.02 0 00-1.02.24l-2.2 2.2a15.04 15.04 0 01-6.59-6.59l2.2-2.21a1 1 0 00.25-1A11.36 11.36 0 018.5 4c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1 0 9.39 7.61 17 17 17 .55 0 1-.45 1-1v-3.5c0-.55-.45-1-1-1z"/>
                         </svg>
-                        <span class="hidden sm:inline">Tanya Chatbot Kami</span>
+                        <span class="hidden sm:inline">Hubungi Kami</span>
                         <span class="sm:hidden">Chatbot</span>
                     </a>
                 </div>

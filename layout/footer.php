@@ -196,7 +196,7 @@
                 <div class="flex space-x-3">
                     <a href="#" class="hover:text-white transition">Syarat & Ketentuan</a>
                     <span>|</span>
-                    <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
+                    <a href="admin/index.php" class="hover:text-white transition">Kebijakan Privasi</a>
                 </div>
             </div>
 
