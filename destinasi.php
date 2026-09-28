@@ -46,24 +46,36 @@ function getDestinationImage($gambar)
 }
 
 // ============================================================
-// FILTER: kategori & search
+// FILTER: kategori, wilayah, search
 // ============================================================
 $filterKategori = trim($_GET['kategori'] ?? '');
+$filterWilayah  = trim($_GET['wilayah'] ?? '');
 $search         = trim($_GET['search'] ?? '');
 
+// Validasi kategori (sesuai ENUM DB)
+$allowedKategori = ['pantai', 'gunung', 'danau', 'budaya', 'kota'];
+if (!in_array($filterKategori, $allowedKategori, true)) {
+    $filterKategori = '';
+}
+
 // ============================================================
-// QUERY: DESTINASI FAVORIT (dengan filter)
+// QUERY: DESTINASI (dengan filter)
 // ============================================================
 $where  = ["status = 'aktif'"];
 $params = [];
 
-if (in_array($filterKategori, ['pantai', 'gunung', 'danau', 'budaya', 'kota'], true)) {
+if ($filterKategori !== '') {
     $where[] = "kategori = :kategori";
     $params[':kategori'] = $filterKategori;
 }
 
+if ($filterWilayah !== '') {
+    $where[] = "wilayah = :wilayah";
+    $params[':wilayah'] = $filterWilayah;
+}
+
 if ($search !== '') {
-    $where[] = "(nama_destinasi LIKE :search OR deskripsi LIKE :search OR wilayah LIKE :search)";
+    $where[] = "(nama_destinasi LIKE :search OR deskripsi LIKE :search OR wilayah LIKE :search OR alamat LIKE :search)";
     $params[':search'] = '%' . $search . '%';
 }
 
@@ -86,7 +98,7 @@ try {
 }
 
 // ============================================================
-// QUERY: SEMUA DESTINASI (untuk wilayah)
+// QUERY: SEMUA DESTINASI (untuk sidebar wilayah)
 // ============================================================
 $allDestinations = [];
 try {
@@ -114,6 +126,24 @@ foreach ($allDestinations as $destination) {
 }
 
 // ============================================================
+// QUERY: DAFTAR WILAYAH UNIK (untuk dropdown filter)
+// ============================================================
+$wilayahList = [];
+try {
+    $wilayahList = db_get_all("
+        SELECT wilayah, COUNT(*) AS total
+        FROM destinasi
+        WHERE status = 'aktif'
+          AND wilayah IS NOT NULL
+          AND wilayah != ''
+        GROUP BY wilayah
+        ORDER BY wilayah ASC
+    ");
+} catch (PDOException $e) {
+    $wilayahList = [];
+}
+
+// ============================================================
 // KATEGORI UNTUK FILTER (sesuai ENUM DB)
 // ============================================================
 $categories = [
@@ -124,6 +154,9 @@ $categories = [
     ['key' => 'budaya',  'nama' => 'Budaya', 'icon' => 'fa-gopuram'],
     ['key' => 'kota',    'nama' => 'Kota',   'icon' => 'fa-city'],
 ];
+
+// Cek apakah ada filter aktif
+$hasFilter = ($filterKategori !== '' || $filterWilayah !== '' || $search !== '');
 
 include __DIR__ . '/layout/header.php';
 ?>
@@ -151,37 +184,23 @@ include __DIR__ . '/layout/header.php';
 
         .tab-shadow { box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1); }
 
-        .cat-btn {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
+        .cat-btn { transition: all 0.2s ease; cursor: pointer; }
         .cat-btn:hover { background: #f1f5f9; }
-        .cat-btn.active {
-            background: #2563eb;
-            color: white;
-        }
+        .cat-btn.active { background: #2563eb; color: white; }
         .cat-btn.active i { color: white !important; }
 
-        .destination-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .destination-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .destination-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
         }
 
         @media (max-width: 640px) {
-            .hero-mobile-padding {
-                padding-top: 2rem;
-                padding-bottom: 2.5rem;
-            }
+            .hero-mobile-padding { padding-top: 2rem; padding-bottom: 2.5rem; }
         }
 
         .region-destination { transition: all 0.3s ease; }
-        .region-destination.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
+        .region-destination.show { display: block; animation: slideDown 0.3s ease; }
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -189,6 +208,7 @@ include __DIR__ . '/layout/header.php';
         .region-header.active .region-icon { transform: rotate(180deg); }
         .region-header.active { background-color: #eff6ff; }
         .destination-item { transition: all 0.2s ease; }
+
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -226,6 +246,9 @@ include __DIR__ . '/layout/header.php';
             <?php if ($filterKategori !== ''): ?>
                 <input type="hidden" name="kategori" value="<?= htmlspecialchars($filterKategori) ?>">
             <?php endif; ?>
+            <?php if ($filterWilayah !== ''): ?>
+                <input type="hidden" name="wilayah" value="<?= htmlspecialchars($filterWilayah) ?>">
+            <?php endif; ?>
 
             <div class="flex-1 px-2 md:px-3 flex items-center space-x-2">
                 <i class="fa-solid fa-location-dot text-gray-400 text-xs md:text-sm"></i>
@@ -258,8 +281,10 @@ include __DIR__ . '/layout/header.php';
                              || ($cat['key'] !== '' && $filterKategori === $cat['key']);
 
                     $urlParams = [];
-                    if ($cat['key'] !== '') $urlParams['kategori'] = $cat['key'];
-                    if ($search !== '')     $urlParams['search'] = $search;
+                    if ($cat['key'] !== '')     $urlParams['kategori'] = $cat['key'];
+                    if ($filterWilayah !== '')  $urlParams['wilayah']  = $filterWilayah;
+                    if ($search !== '')         $urlParams['search']   = $search;
+
                     $url = 'destinasi.php' . ($urlParams ? '?' . http_build_query($urlParams) : '');
                 ?>
                     <a href="<?= htmlspecialchars($url) ?>"
@@ -285,11 +310,21 @@ include __DIR__ . '/layout/header.php';
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-5 md:mb-8 gap-2">
             <div>
                 <span class="text-blue-600 font-extrabold text-[10px] md:text-xs uppercase tracking-wider block mb-1">
-                    <?= $filterKategori !== '' ? 'Filter: ' . ucfirst($filterKategori) : 'Destinasi Populer' ?>
+                    <?php if ($filterWilayah !== '' && $filterKategori !== ''): ?>
+                        <?= htmlspecialchars($filterWilayah) ?> • <?= ucfirst($filterKategori) ?>
+                    <?php elseif ($filterWilayah !== ''): ?>
+                        Wilayah: <?= htmlspecialchars($filterWilayah) ?>
+                    <?php elseif ($filterKategori !== ''): ?>
+                        Kategori: <?= ucfirst($filterKategori) ?>
+                    <?php else: ?>
+                        Destinasi Populer
+                    <?php endif; ?>
                 </span>
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-custom-blue">
                     <?php if ($search !== ''): ?>
                         Hasil Pencarian "<?= htmlspecialchars($search) ?>"
+                    <?php elseif ($filterWilayah !== '' || $filterKategori !== ''): ?>
+                        Destinasi Pilihan
                     <?php else: ?>
                         Destinasi Favorit Wisatawan
                     <?php endif; ?>
@@ -299,13 +334,43 @@ include __DIR__ . '/layout/header.php';
                 </p>
             </div>
 
-            <?php if ($filterKategori !== '' || $search !== ''): ?>
+            <?php if ($hasFilter): ?>
                 <a href="destinasi.php" class="text-red-500 hover:text-red-600 font-bold text-[10px] md:text-xs flex items-center space-x-1 border border-red-200 px-2.5 md:px-4 py-1.5 md:py-2 rounded-md hover:bg-red-50 transition shrink-0">
                     <i class="fa-solid fa-xmark text-[8px] md:text-[10px]"></i>
                     <span>Reset Filter</span>
                 </a>
             <?php endif; ?>
         </div>
+
+        <!-- CHIP FILTER AKTIF -->
+        <?php if ($hasFilter): ?>
+            <div class="flex flex-wrap items-center gap-2 mb-5 text-xs">
+                <span class="text-gray-400 text-[10px]">
+                    <i class="fa-solid fa-filter"></i> Filter aktif:
+                </span>
+
+                <?php if ($search !== ''): ?>
+                    <span class="bg-blue-50 text-blue-600 px-3 py-1 rounded-full font-semibold">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <?= htmlspecialchars($search) ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($filterWilayah !== ''): ?>
+                    <span class="bg-cyan-50 text-cyan-600 px-3 py-1 rounded-full font-semibold">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <?= htmlspecialchars($filterWilayah) ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($filterKategori !== ''): ?>
+                    <span class="bg-amber-50 text-amber-600 px-3 py-1 rounded-full font-semibold">
+                        <i class="fa-solid fa-tag"></i>
+                        <?= ucfirst($filterKategori) ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
         <!-- CARD DATABASE -->
         <?php if (!empty($destinations)): ?>
@@ -324,7 +389,6 @@ include __DIR__ . '/layout/header.php';
 
                     $imagePath = getDestinationImage($gambar);
 
-                    // URL ke detail
                     $detailUrl = 'detail-destinasi.php';
                     if (!empty($slug)) {
                         $detailUrl .= '?slug=' . urlencode($slug);
@@ -332,7 +396,6 @@ include __DIR__ . '/layout/header.php';
                         $detailUrl .= '?id=' . (int) $destination['id'];
                     }
 
-                    // Icon kategori
                     $katIcon = [
                         'pantai' => 'fa-umbrella-beach',
                         'gunung' => 'fa-mountain',
@@ -342,7 +405,7 @@ include __DIR__ . '/layout/header.php';
                     ][$kategori] ?? 'fa-map-pin';
                 ?>
 
-                    <!-- KARTU (seluruhnya bisa diklik) -->
+                    <!-- KARTU -->
                     <a href="<?= htmlspecialchars($detailUrl) ?>"
                        class="destination-card bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between group">
 
@@ -432,12 +495,12 @@ include __DIR__ . '/layout/header.php';
                     <i class="fa-solid fa-location-dot text-blue-500 text-xl"></i>
                 </div>
                 <h3 class="font-bold text-gray-700 mb-1">
-                    <?= $search !== '' ? 'Destinasi Tidak Ditemukan' : 'Belum Ada Destinasi' ?>
+                    <?= $hasFilter ? 'Destinasi Tidak Ditemukan' : 'Belum Ada Destinasi' ?>
                 </h3>
                 <p class="text-xs text-gray-400">
-                    <?= $search !== '' ? 'Coba kata kunci lain atau reset filter.' : 'Belum ada destinasi aktif yang tersedia.' ?>
+                    <?= $hasFilter ? 'Coba kata kunci lain atau reset filter.' : 'Belum ada destinasi aktif yang tersedia.' ?>
                 </p>
-                <?php if ($filterKategori !== '' || $search !== ''): ?>
+                <?php if ($hasFilter): ?>
                     <a href="destinasi.php" class="inline-flex items-center gap-2 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-semibold transition">
                         <i class="fa-solid fa-rotate-left"></i> Lihat Semua Destinasi
                     </a>
@@ -486,11 +549,12 @@ include __DIR__ . '/layout/header.php';
                 </h3>
 
                 <?php if (!empty($regions)): ?>
-                    <?php foreach ($regions as $regionName => $regionDestinations): ?>
-                        <?php $regionId = 'region_' . md5($regionName); ?>
-
+                    <?php foreach ($regions as $regionName => $regionDestinations):
+                        $regionId = 'region_' . md5($regionName);
+                        $isRegionActive = ($filterWilayah === $regionName);
+                    ?>
                         <div class="region-item border border-gray-100 rounded-lg overflow-hidden">
-                            <div class="region-header flex justify-between items-center p-2 md:p-3 bg-white hover:bg-blue-50/30 transition cursor-pointer group"
+                            <div class="region-header flex justify-between items-center p-2 md:p-3 <?= $isRegionActive ? 'bg-blue-50' : 'bg-white' ?> hover:bg-blue-50/30 transition cursor-pointer group"
                                  data-region="<?= htmlspecialchars($regionId) ?>">
 
                                 <span class="font-semibold text-[11px] md:text-xs text-gray-700 group-hover:text-blue-600 transition">
@@ -509,6 +573,13 @@ include __DIR__ . '/layout/header.php';
                                  id="<?= htmlspecialchars($regionId) ?>">
 
                                 <div class="grid grid-cols-1 gap-2">
+                                    <!-- Link Filter Wilayah -->
+                                    <a href="destinasi.php?wilayah=<?= urlencode($regionName) ?>"
+                                       class="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-blue-50 text-blue-600 text-[10px] md:text-xs font-semibold hover:bg-blue-100 transition">
+                                        <i class="fa-solid fa-filter"></i>
+                                        Lihat semua destinasi di <?= htmlspecialchars($regionName) ?>
+                                    </a>
+
                                     <?php foreach ($regionDestinations as $dest):
                                         $destUrl = 'detail-destinasi.php';
                                         if (!empty($dest['slug'])) {

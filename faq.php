@@ -235,19 +235,25 @@
                         <p class="text-sm">Senin - Minggu</p>
                         <p class="text-lg font-bold">08.00 - 20.00 WIB</p>
                         <div class="mt-4 pt-4 border-t border-white/20">
-                            <p class="text-xs text-blue-100">📞 0812-3456-7890</p>
-                            <p class="text-xs text-blue-100 mt-1">✉️ info@bayuprimawisata.com</p>
+                            <p class="text-xs text-blue-100">📞 0852-8144-1565</p>
+                            <p class="text-xs text-blue-100 mt-1">✉️ bayuprimawisata.com</p>
                         </div>
                     </div>
                     
                     <!-- Download Brochure -->
-                    <div class="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm">
+                    <div class="bg-white rounded-2xl p-6 text-center border border-gray-100 shadow-sm hover:shadow-md transition">
                         <i class="fa-regular fa-file-pdf text-red-500 text-3xl mb-3"></i>
                         <h3 class="font-bold text-sm text-gray-800 mb-2">Download Brochure</h3>
-                        <p class="text-[11px] text-gray-500 mb-3">Dapatkan informasi lengkap tentang paket wisata kami</p>
-                        <button class="w-full border border-red-500 text-red-500 hover:bg-red-50 py-2 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
+                        <p class="text-[11px] text-gray-500 mb-3">
+                            Dapatkan informasi lengkap tentang paket wisata kami
+                        </p>
+
+                        <!-- Tombol download -->
+                        <a href="uploads/brochure/brochure-bpw.pdf"
+                        download="Brochure-BayuPrimaWisata.pdf"
+                        class="w-full border border-red-500 text-red-500 hover:bg-red-50 py-2 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-download"></i> Download PDF
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -262,7 +268,7 @@
                 <h3 class="text-2xl md:text-3xl font-bold mb-3">Pertanyaan Anda Belum Terjawab?</h3>
                 <p class="text-blue-100 mb-6 max-w-lg mx-auto">Hubungi tim customer service kami, kami akan dengan senang hati membantu Anda.</p>
                 <div class="flex flex-wrap gap-4 justify-center">
-                    <a href="https://wa.me/6281234567890" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-semibold transition shadow-lg">
+                    <a href="https://wa.me/6285281441565" target="_blank" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-semibold transition shadow-lg">
                         <i class="fa-brands fa-whatsapp"></i> Chat WhatsApp
                     </a>
                     <a href="#" class="inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition shadow-lg">
@@ -282,7 +288,7 @@
         // FAQ Data
         const faqData = [
             // Pemesanan
-            { id: 1, category: "pemesanan", question: "Bagaimana cara memesan paket wisata di BPW?", answer: "Anda dapat memesan paket wisata melalui website kami dengan mengisi form pemesanan, atau menghubungi customer service kami via WhatsApp di 0812-3456-7890. Tim kami akan membantu proses pemesanan Anda dengan cepat dan mudah.", icon: "fa-calendar-check" },
+            { id: 1, category: "pemesanan", question: "Bagaimana cara memesan paket wisata di BPW?", answer: "Anda dapat memesan paket wisata melalui website kami dengan mengisi form pemesanan, atau menghubungi customer service kami via WhatsApp di 6285281441565. Tim kami akan membantu proses pemesanan Anda dengan cepat dan mudah.", icon: "fa-calendar-check" },
             { id: 2, category: "pemesanan", question: "Apakah ada minimal pemesanan untuk paket wisata?", answer: "Minimal pemesanan bervariasi tergantung paket yang dipilih. Untuk paket reguler umumnya minimal 2 orang dewasa. Namun kami juga menyediakan paket private tour untuk 1 orang atau kelompok besar. Silakan konsultasikan dengan tim kami.", icon: "fa-calendar-check" },
             { id: 3, category: "pemesanan", question: "Berapa lama proses konfirmasi pemesanan?", answer: "Setelah Anda melakukan pemesanan dan pembayaran, konfirmasi akan kami kirimkan dalam waktu maksimal 2x24 jam melalui email atau WhatsApp. Untuk pemesanan H-7, konfirmasi akan lebih cepat.", icon: "fa-calendar-check" },
             { id: 4, category: "pemesanan", question: "Apakah bisa memesan untuk rombongan besar (study tour/gathering)?", answer: "Tentu saja! BPW memiliki layanan khusus untuk rombongan besar seperti study tour, gathering perusahaan, atau wisata keluarga besar. Tim kami akan membantu merancang paket yang sesuai dengan kebutuhan Anda.", icon: "fa-calendar-check" },

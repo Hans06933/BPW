@@ -16,7 +16,6 @@
             background-size: cover;
             background-position: center;
         }
-        /* Perbaikan khusus untuk hero section di mobile */
         @media (max-width: 768px) {
             .hero-mobile {
                 min-height: auto;
@@ -27,7 +26,6 @@
                 margin-top: 1rem;
             }
         }
-        /* Fallback untuk gambar yang gagal loading */
         img {
             background-color: #e2e8f0;
         }
@@ -67,55 +65,124 @@ include "layout/header.php";
                     </div>
                 </div>
 
-                <!-- FORM PENCARIAN -->
-                <div class="lg:col-span-5 form-card-mobile mt-4 lg:mt-0">
-                    <div class="bg-black/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/10 shadow-2xl">
-                        <div class="grid grid-cols-4 gap-0.5 md:gap-1 text-center text-[10px] md:text-xs font-semibold mb-4 md:mb-6 border-b border-white/10 pb-2">
-                            <div class="text-cyan-400 border-b-2 border-cyan-400 pb-2 cursor-pointer">
-                                <i class="fa-solid fa-suitcase block text-base md:text-lg mb-1"></i> Paket
-                            </div>
-                            <div class="text-slate-300 hover:text-white pb-2 cursor-pointer">
-                                <i class="fa-solid fa-hotel block text-base md:text-lg mb-1"></i> Hotel
-                            </div>
-                            <div class="text-slate-300 hover:text-white pb-2 cursor-pointer">
-                                <i class="fa-solid fa-car block text-base md:text-lg mb-1"></i> Transport
-                            </div>
-                            <div class="text-slate-300 hover:text-white pb-2 cursor-pointer">
-                                <i class="fa-solid fa-comments block text-base md:text-lg mb-1"></i> Konsul
-                            </div>
-                        </div>
-                        
-                        <form class="space-y-3 md:space-y-4 text-gray-800">
-                            <div>
-                                <label class="block text-white text-[10px] md:text-xs font-medium mb-1">Tujuan Wisata</label>
-                                <select class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                    <option>Pilih Destinasi</option>
-                                    <option>Bali</option>
-                                    <option>Yogyakarta</option>
-                                    <option>Labuan Bajo</option>
-                                </select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3 md:gap-4">
-                                <div>
-                                    <label class="block text-white text-[10px] md:text-xs font-medium mb-1">Tanggal Berangkat</label>
-                                    <input type="date" class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-white text-[10px] md:text-xs font-medium mb-1">Jumlah Peserta</label>
-                                    <select class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        <option>2 Dewasa</option>
-                                        <option>1 Dewasa</option>
-                                        <option>Kelompok (5+)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 md:py-3 rounded text-xs md:text-sm transition mt-2 shadow-lg flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-magnifying-glass"></i> <span>Cari Paket</span>
-                            </button>
-                        </form>
-                    </div>
-                </div>
+                <!-- FORM PENCARIAN DESTINASI -->
+<?php
+// ============================================================
+// AMBIL WILAYAH UNIK DARI DATABASE
+// ============================================================
+if (!function_exists('db_get_all')) {
+    require_once "config/database.php";
+}
+
+$wilayahList = [];
+try {
+    $wilayahList = db_get_all("
+        SELECT wilayah, COUNT(*) AS total
+        FROM destinasi
+        WHERE status = 'aktif'
+          AND wilayah IS NOT NULL
+          AND wilayah != ''
+        GROUP BY wilayah
+        ORDER BY wilayah ASC
+    ");
+} catch (PDOException $e) {
+    $wilayahList = [];
+}
+
+// Kategori sesuai ENUM DB
+$kategoriList = ['pantai', 'gunung', 'danau', 'budaya', 'kota'];
+?>
+
+<div class="lg:col-span-5 form-card-mobile mt-4 lg:mt-0">
+    <div class="bg-black/40 backdrop-blur-md rounded-xl p-4 md:p-6 border border-white/10 shadow-2xl">
+
+        <!-- Tab Menu -->
+        <div class="grid grid-cols-4 gap-0.5 md:gap-1 text-center text-[10px] md:text-xs font-semibold mb-4 md:mb-6 border-b border-white/10 pb-2">
+            <a href="destinasi.php"
+               class="text-cyan-400 border-b-2 border-cyan-400 pb-2 cursor-pointer">
+                <i class="fa-solid fa-map-location-dot block text-base md:text-lg mb-1"></i>
+                Destinasi
+            </a>
+            <a href="paket_wisata.php"
+               class="text-slate-300 hover:text-white pb-2 cursor-pointer transition">
+                <i class="fa-solid fa-suitcase block text-base md:text-lg mb-1"></i>
+                Paket
+            </a>
+            <a href="hotel.php"
+               class="text-slate-300 hover:text-white pb-2 cursor-pointer transition">
+                <i class="fa-solid fa-hotel block text-base md:text-lg mb-1"></i>
+                Hotel
+            </a>
+            <a href="kontak.php"
+               class="text-slate-300 hover:text-white pb-2 cursor-pointer transition">
+                <i class="fa-solid fa-comments block text-base md:text-lg mb-1"></i>
+                Konsul
+            </a>
+        </div>
+
+        <!-- Form Cari Destinasi -->
+        <form action="destinasi.php" method="GET" class="space-y-3 md:space-y-4 text-gray-800">
+
+            <!-- Kata Kunci -->
+            <div>
+                <label class="block text-white text-[10px] md:text-xs font-medium mb-1">
+                    <i class="fa-solid fa-magnifying-glass text-cyan-400 mr-1"></i>
+                    Cari Destinasi
+                </label>
+                <input type="text"
+                       name="search"
+                       placeholder="Contoh: Pantai Kuta, Bromo..."
+                       class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
+
+            <!-- Wilayah & Kategori -->
+            <div class="grid grid-cols-2 gap-3 md:gap-4">
+
+                <div>
+                    <label class="block text-white text-[10px] md:text-xs font-medium mb-1">
+                        <i class="fa-solid fa-location-dot text-cyan-400 mr-1"></i>
+                        Wilayah
+                    </label>
+                    <select name="wilayah"
+                            class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua Wilayah</option>
+                        <?php foreach ($wilayahList as $w): ?>
+                            <option value="<?= htmlspecialchars($w['wilayah']) ?>">
+                                <?= htmlspecialchars($w['wilayah']) ?>
+                                (<?= (int) $w['total'] ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-white text-[10px] md:text-xs font-medium mb-1">
+                        <i class="fa-solid fa-tag text-cyan-400 mr-1"></i>
+                        Kategori
+                    </label>
+                    <select name="kategori"
+                            class="w-full bg-white px-3 py-2 md:py-2.5 rounded text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Semua Kategori</option>
+                        <?php foreach ($kategoriList as $kat): ?>
+                            <option value="<?= htmlspecialchars($kat) ?>">
+                                <?= ucfirst(htmlspecialchars($kat)) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Submit -->
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 md:py-3 rounded text-xs md:text-sm transition mt-2 shadow-lg flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Cari Destinasi</span>
+            </button>
+
+        </form>
+    </div>
+</div>
         </div>
     </section>
 
@@ -505,133 +572,130 @@ include "layout/header.php";
     </section>
 
     <!-- TESTIMONI SECTION -->
-    <!-- ============================================================
-     TESTIMONI PELANGGAN (DINAMIS DARI DATABASE)
-============================================================ -->
-<section class="py-12 md:py-16 bg-slate-50 border-t">
-    <div class="container mx-auto px-4 md:px-6">
+    <section class="py-12 md:py-16 bg-slate-50 border-t">
+        <div class="container mx-auto px-4 md:px-6">
 
-        <?php
-        // ============================================================
-        // AMBIL TESTIMONI DARI DATABASE
-        // ============================================================
-        $testimonials = [];
-
-        try {
-            $testimonials = db_get_all("
-                SELECT
-                    nama,
-                    kota_asal,
-                    destinasi,
-                    testimoni,
-                    rating,
-                    foto
-                FROM testimoni
-                WHERE status = 'approved'
-                ORDER BY is_featured DESC, created_at DESC
-                LIMIT 3
-            ");
-        } catch (PDOException $e) {
+            <?php
+            // ============================================================
+            // AMBIL TESTIMONI DARI DATABASE
+            // ============================================================
             $testimonials = [];
-        }
-        ?>
 
-        <!-- HEADER -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-10 gap-3">
-            <div>
-                <span class="text-blue-600 font-bold text-xs uppercase tracking-widest block mb-1">
-                    Testimoni Pelanggan
-                </span>
-                <h2 class="text-2xl md:text-3xl font-bold text-custom-blue">
-                    Apa Kata Mereka?
-                </h2>
-            </div>
-            <a href="testimoni.php"
-               class="text-blue-600 hover:text-blue-700 font-bold text-xs flex items-center space-x-1 border border-blue-200 px-3 md:px-4 py-1.5 md:py-2 rounded-md hover:bg-blue-50 transition">
-                <span>Lihat Semua Testimoni</span>
-                <i class="fa-solid fa-arrow-right"></i>
-            </a>
-        </div>
+            try {
+                $testimonials = db_get_all("
+                    SELECT
+                        nama,
+                        kota_asal,
+                        destinasi,
+                        testimoni,
+                        rating,
+                        foto
+                    FROM testimoni
+                    WHERE status = 'approved'
+                    ORDER BY is_featured DESC, created_at DESC
+                    LIMIT 3
+                ");
+            } catch (PDOException $e) {
+                $testimonials = [];
+            }
+            ?>
 
-        <!-- GRID TESTIMONI -->
-        <?php if (!empty($testimonials)): ?>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-                <?php foreach ($testimonials as $tst): ?>
-                    <?php
-                    $nama    = $tst['nama'] ?? 'Anonim';
-                    $kota    = $tst['kota_asal'] ?: 'Indonesia';
-                    $pesan   = $tst['testimoni'] ?? '';
-                    $rating  = max(0, min(5, (int) ($tst['rating'] ?? 5)));
-                    $foto    = $tst['foto'] ?? '';
-
-                    // Path foto (kalau ada)
-                    $fotoPath = null;
-                    if (!empty($foto) && file_exists(__DIR__ . '/' . $foto)) {
-                        $fotoPath = $foto;
-                    }
-                    ?>
-
-                    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-
-                        <!-- Rating -->
-                        <div class="text-amber-400 text-[10px] md:text-xs mb-3">
-                            <?php for ($i = 1; $i <= 5; $i++): ?>
-                                <i class="fa-<?= $i <= $rating ? 'solid' : 'regular' ?> fa-star"></i>
-                            <?php endfor; ?>
-                        </div>
-
-                        <!-- Isi Testimoni -->
-                        <p class="text-gray-600 text-xs italic leading-relaxed mb-4 md:mb-6 flex-1">
-                            "<?= htmlspecialchars($pesan) ?>"
-                        </p>
-
-                        <!-- Info Pengirim -->
-                        <div class="flex items-center space-x-3 border-t pt-4">
-                            <?php if ($fotoPath): ?>
-                                <img src="<?= htmlspecialchars($fotoPath) ?>"
-                                     alt="<?= htmlspecialchars($nama) ?>"
-                                     class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover">
-                            <?php else: ?>
-                                <div class="w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs md:text-sm">
-                                    <?= htmlspecialchars(strtoupper(substr($nama, 0, 1))) ?>
-                                </div>
-                            <?php endif; ?>
-
-                            <div>
-                                <h4 class="font-bold text-xs md:text-sm text-slate-800">
-                                    <?= htmlspecialchars($nama) ?>
-                                </h4>
-                                <span class="text-[9px] md:text-[10px] text-gray-400 block">
-                                    <?= htmlspecialchars($kota) ?>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-
-        <?php else: ?>
-
-            <!-- Empty State -->
-            <div class="bg-white rounded-xl border border-gray-100 p-10 text-center">
-                <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-comment-dots text-blue-500 text-xl"></i>
+            <!-- HEADER -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 md:mb-10 gap-3">
+                <div>
+                    <span class="text-blue-600 font-bold text-xs uppercase tracking-widest block mb-1">
+                        Testimoni Pelanggan
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-bold text-custom-blue">
+                        Apa Kata Mereka?
+                    </h2>
                 </div>
-                <h3 class="font-bold text-gray-700 mb-1">Belum Ada Testimoni</h3>
-                <p class="text-xs text-gray-400">
-                    Jadilah yang pertama membagikan pengalaman Anda!
-                </p>
-                <a href="testimoni.php#tulis"
-                   class="inline-flex items-center gap-2 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-semibold transition">
-                    <i class="fa-solid fa-pen"></i> Tulis Testimoni
+                <a href="testimoni.php"
+                class="text-blue-600 hover:text-blue-700 font-bold text-xs flex items-center space-x-1 border border-blue-200 px-3 md:px-4 py-1.5 md:py-2 rounded-md hover:bg-blue-50 transition">
+                    <span>Lihat Semua Testimoni</span>
+                    <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
 
-        <?php endif; ?>
+            <!-- GRID TESTIMONI -->
+            <?php if (!empty($testimonials)): ?>
 
-    </div>
-</section>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+                    <?php foreach ($testimonials as $tst): ?>
+                        <?php
+                        $nama    = $tst['nama'] ?? 'Anonim';
+                        $kota    = $tst['kota_asal'] ?: 'Indonesia';
+                        $pesan   = $tst['testimoni'] ?? '';
+                        $rating  = max(0, min(5, (int) ($tst['rating'] ?? 5)));
+                        $foto    = $tst['foto'] ?? '';
+
+                        // Path foto (kalau ada)
+                        $fotoPath = null;
+                        if (!empty($foto) && file_exists(__DIR__ . '/' . $foto)) {
+                            $fotoPath = $foto;
+                        }
+                        ?>
+
+                        <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+
+                            <!-- Rating -->
+                            <div class="text-amber-400 text-[10px] md:text-xs mb-3">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <i class="fa-<?= $i <= $rating ? 'solid' : 'regular' ?> fa-star"></i>
+                                <?php endfor; ?>
+                            </div>
+
+                            <!-- Isi Testimoni -->
+                            <p class="text-gray-600 text-xs italic leading-relaxed mb-4 md:mb-6 flex-1">
+                                "<?= htmlspecialchars($pesan) ?>"
+                            </p>
+
+                            <!-- Info Pengirim -->
+                            <div class="flex items-center space-x-3 border-t pt-4">
+                                <?php if ($fotoPath): ?>
+                                    <img src="<?= htmlspecialchars($fotoPath) ?>"
+                                        alt="<?= htmlspecialchars($nama) ?>"
+                                        class="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover">
+                                <?php else: ?>
+                                    <div class="w-8 h-8 md:w-10 md:h-10 bg-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold text-xs md:text-sm">
+                                        <?= htmlspecialchars(strtoupper(substr($nama, 0, 1))) ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div>
+                                    <h4 class="font-bold text-xs md:text-sm text-slate-800">
+                                        <?= htmlspecialchars($nama) ?>
+                                    </h4>
+                                    <span class="text-[9px] md:text-[10px] text-gray-400 block">
+                                        <?= htmlspecialchars($kota) ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+            <?php else: ?>
+
+                <!-- Empty State -->
+                <div class="bg-white rounded-xl border border-gray-100 p-10 text-center">
+                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-comment-dots text-blue-500 text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-700 mb-1">Belum Ada Testimoni</h3>
+                    <p class="text-xs text-gray-400">
+                        Jadilah yang pertama membagikan pengalaman Anda!
+                    </p>
+                    <a href="testimoni.php#tulis"
+                    class="inline-flex items-center gap-2 mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-xs font-semibold transition">
+                        <i class="fa-solid fa-pen"></i> Tulis Testimoni
+                    </a>
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+    </section>
 
 <?php
 include "layout/footer.php";

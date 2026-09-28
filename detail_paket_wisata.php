@@ -141,10 +141,6 @@ include __DIR__ . '/layout/header.php';
 
             <!-- Breadcrumb -->
             <nav class="flex items-center gap-2 text-xs text-blue-200 mb-5 flex-wrap">
-                <a href="index.php" class="hover:text-white transition">
-                    <i class="fa-solid fa-house"></i> Home
-                </a>
-                <i class="fa-solid fa-chevron-right text-[8px]"></i>
                 <a href="paket_wisata.php" class="hover:text-white transition">Paket Wisata</a>
                 <i class="fa-solid fa-chevron-right text-[8px]"></i>
                 <span class="text-white line-clamp-1"><?= htmlspecialchars($namaPaket) ?></span>

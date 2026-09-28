@@ -10,14 +10,14 @@
                 <!-- Kolom 1: Logo & Deskripsi -->
                 <div class="lg:col-span-4 space-y-5">
                     <div class="flex items-center">
-                        <div class="text-sky-400 font-bold flex items-center pr-3">
-                            <svg class="w-8 h-8 transform -rotate-45" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L14 19v-5.5l8 2.5z"/>
-                            </svg>
+                        <div class="pr-3">
+                            <img src="images/logo.jpg"
+                                alt="Bayu Prima Wisata"
+                                class="w-12 h-12 object-contain">
                         </div>
                         <div class="h-6 w-[1px] bg-white/40"></div>
                         <div class="leading-tight pl-3">
-                            <span class="text-sm font-bold block tracking-normal">BAYU PRIMA WISATA</span>
+                            <span class="text-sm font-bold block tracking-normal text-white">BAYU PRIMA WISATA</span>
                         </div>
                     </div>
                     
@@ -29,13 +29,13 @@
                         <a href="https://facebook.com/username-bpw" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#1877F2] transition-all duration-300">
                             <i class="fab fa-facebook-f text-lg"></i>
                         </a>
-                        <a href="https://instagram.com/username-bpw" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#E4405F] transition-all duration-300">
+                        <a href="https://instagram.com/bayuprimawisata" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#E4405F] transition-all duration-300">
                             <i class="fab fa-instagram text-lg"></i>
                         </a>
-                        <a href="https://tiktok.com/@username-bpw" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#000000] transition-all duration-300">
+                        <a href="https://tiktok.com/bpw" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#000000] transition-all duration-300">
                             <i class="fab fa-tiktok text-lg"></i>
                         </a>
-                        <a href="https://wa.me/6281234567890" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#25D366] transition-all duration-300">
+                        <a href="https://wa.me/6285281441565" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 text-white hover:bg-[#25D366] transition-all duration-300">
                             <i class="fab fa-whatsapp text-lg"></i>
                         </a>
                     </div>
